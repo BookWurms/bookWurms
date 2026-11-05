@@ -1,0 +1,46 @@
+# *************************************************************************** #
+#                             Docker Compose File
+# *************************************************************************** #
+
+networks:
+  main_network:
+    name: main_network
+
+# volumes:
+#   database_data:
+#     name: database_data
+#     driver: local
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: ~/data/database_data
+
+# secrets:
+#   db_user_password:
+#     file: ../secrets/example.txt
+
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    env_file: .env #POSTGRES_PASSWORD
+    networks:
+      - main_network
+
+    # healthcheck:
+    #   test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 3
+
+# only for development, not for production because of security reasons
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - main_network
