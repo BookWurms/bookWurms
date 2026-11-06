@@ -6,14 +6,9 @@ networks:
   main_network:
     name: main_network
 
-# volumes:
-#   database_data:
-#     name: database_data
-#     driver: local
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: ~/data/database_data
+# survives `make down`, wiped by `make nuke-db`
+volumes:
+  db_data:
 
 # secrets:
 #   db_user_password:
@@ -21,25 +16,43 @@ networks:
 
 
 services:
-
   db:
-    image: postgres
-    restart: always
+    image: postgres:18
+    restart: unless-stopped
     shm_size: 128mb
-    env_file: .env #POSTGRES_PASSWORD
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/postgresql
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      start_interval: 1s
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
-    # healthcheck:
-    #   test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
-    #   interval: 10s
-    #   timeout: 3s
-    #   retries: 3
+  backend:
+      build: ./Backend
+      restart: unless-stopped
+      # env_file: .env
+      depends_on:
+        db:
+          condition: service_healthy
+      # ports:
+      #   - 3000:3000
+      networks:
+        - main_network
+
 
 # only for development, not for production because of security reasons
   adminer:
-    image: adminer
-    restart: always
+    image: adminer:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - 8080:8080
     networks:

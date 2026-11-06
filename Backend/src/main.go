@@ -1,27 +1,24 @@
-// package main
-
-// import "fmt"
-
-// func main() {
-//     fmt.Println("Hello, World!")
-// }
-
-
-
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	// "github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
-	http.ListenAndServe(":3000", r)
+
+	// Simple "Hello, World!" to test the docker container setup
+	for true {
+		fmt.Println("Hello, World!")
+		time.Sleep(1 * time.Second)
+	}
+	_ = chi.NewRouter()
+	// r.Use(middleware.Logger)
+	// r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Write([]byte("welcome"))
+	// })
+	// http.ListenAndServe(":3000", r)
 }
