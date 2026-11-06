@@ -3,12 +3,14 @@
 # *************************************************************************** #
 
 networks:
-  main_network:
-    name: main_network
+  frontend_network:
+  db_network:
 
 # survives `make down`, wiped by `make nuke-db`
 volumes:
   db_data:
+  caddy_data:
+  caddy_config:
 
 # secrets:
 #   db_user_password:
@@ -24,7 +26,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql
     networks:
-      - main_network
+      - db_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       start_interval: 1s
@@ -40,10 +42,36 @@ services:
       depends_on:
         db:
           condition: service_healthy
-      # ports:
-      #   - 3000:3000
       networks:
-        - main_network
+        - frontend_network
+        - db_network
+
+  frontend:
+    build: ./Frontend
+    restart: unless-stopped
+    # ports:
+    #   - 5173:5173   # direct access for testing; remove once Caddy proxies to it
+    networks:
+      - frontend_network
+
+
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8001:80"
+      - "8443:443"
+      - "8443:443/udp"
+    volumes:
+      - $PWD/Proxy:/etc/caddy
+      - $PWD/site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - frontend_network
+
 
 
 # only for development, not for production because of security reasons
@@ -56,4 +84,4 @@ services:
     ports:
       - 8080:8080
     networks:
-      - main_network
+      - db_network
