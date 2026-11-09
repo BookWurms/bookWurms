@@ -3,18 +3,18 @@
 # *************************************************************************** #
 
 networks:
-  frontend_network:
+  caddy_network:
   db_network:
 
-# survives `make down`, wiped by `make nuke-db`
+    # survives `make down`, wiped by `make nuke-db`
 volumes:
   db_data:
   caddy_data:
   caddy_config:
 
-# secrets:
-#   db_user_password:
-#     file: ../secrets/example.txt
+    # secrets:
+    #   db_user_password:
+    #     file: ../secrets/example.txt
 
 
 services:
@@ -28,7 +28,7 @@ services:
     networks:
       - db_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
       start_interval: 1s
       interval: 5s
       timeout: 3s
@@ -36,27 +36,18 @@ services:
       start_period: 10s
 
   backend:
-      build: ./Backend
-      restart: unless-stopped
-      # env_file: .env
-      depends_on:
-        db:
-          condition: service_healthy
-      networks:
-        - frontend_network
-        - db_network
-
-  frontend:
-    build: ./Frontend
+    build: ./Backend
     restart: unless-stopped
-    # ports:
-    #   - 5173:5173   # direct access for testing; remove once Caddy proxies to it
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
-      - frontend_network
+      - caddy_network
+      - db_network
 
-
-  caddy:
-    image: caddy:alpine
+  frontend-caddy:
+    build: ./Frontend
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -65,16 +56,13 @@ services:
       - "8443:443"
       - "8443:443/udp"
     volumes:
-      - $PWD/Proxy:/etc/caddy
-      - $PWD/site:/srv
+      - ./Proxy:/etc/caddy
       - caddy_data:/data
       - caddy_config:/config
     networks:
-      - frontend_network
+      - caddy_network
 
-
-
-# only for development, not for production because of security reasons
+  # only for development, not for production because of security reasons
   adminer:
     image: adminer:latest
     restart: unless-stopped
