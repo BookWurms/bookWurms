@@ -1,5 +1,4 @@
 node_modules
 dist
-docker-reactjs-sample
-Dockerfile
-.dockerignore
+build
+.svelte-kit

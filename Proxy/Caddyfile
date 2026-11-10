@@ -10,10 +10,12 @@
 
 localhost {
 	handle /api/* {
-		reverse_proxy backend:3000
+		reverse_proxy backend:50000
 	}
 	handle {
-		
+		root * /srv/frontend
+		try_files {path} /index.html
+		file_server
 	}
 }
 

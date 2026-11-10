@@ -6,16 +6,11 @@ networks:
   caddy_network:
   db_network:
 
-    # survives `make down`, wiped by `make nuke-db`
 volumes:
-  db_data:
+  db_data: # the real database storage
+
   caddy_data:
   caddy_config:
-
-    # secrets:
-    #   db_user_password:
-    #     file: ../secrets/example.txt
-
 
 services:
   db:
@@ -52,9 +47,7 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "8001:80"
       - "8443:443"
-      - "8443:443/udp"
     volumes:
       - ./Proxy:/etc/caddy
       - caddy_data:/data

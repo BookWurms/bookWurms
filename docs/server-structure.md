@@ -9,7 +9,7 @@ flowchart TD
 
     caddy{"reverse proxy <br/>(caddy)"}
     frontend["frontend prebuilt files<br/> (Svelte app) /srv/frontend"]
-    backend["backend (Go+Gin)<br/>:3000"]
+    backend["backend (Go+Gin)<br/>:50000"]
     adminer["adminer DB web UI<br/>(dev only)"]
 
     db[("db (Postgres)<br/>:5432")]
