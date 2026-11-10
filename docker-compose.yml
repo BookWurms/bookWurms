@@ -3,17 +3,14 @@
 # *************************************************************************** #
 
 networks:
-  main_network:
-    name: main_network
+  caddy_network:
+  db_network:
 
-# survives `make down`, wiped by `make nuke-db`
 volumes:
-  db_data:
+  db_data: # the real database storage
 
-# secrets:
-#   db_user_password:
-#     file: ../secrets/example.txt
-
+  caddy_data:
+  caddy_config:
 
 services:
   db:
@@ -24,9 +21,9 @@ services:
     volumes:
       - db_data:/var/lib/postgresql
     networks:
-      - main_network
+      - db_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
       start_interval: 1s
       interval: 5s
       timeout: 3s
@@ -34,19 +31,31 @@ services:
       start_period: 10s
 
   backend:
-      build: ./Backend
-      restart: unless-stopped
-      # env_file: .env
-      depends_on:
-        db:
-          condition: service_healthy
-      # ports:
-      #   - 3000:3000
-      networks:
-        - main_network
+    build: ./Backend
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - caddy_network
+      - db_network
 
+  frontend-caddy:
+    build: ./Frontend
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8443:443"
+    volumes:
+      - ./Proxy:/etc/caddy
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - caddy_network
 
-# only for development, not for production because of security reasons
+  # only for development, not for production because of security reasons
   adminer:
     image: adminer:latest
     restart: unless-stopped
@@ -56,4 +65,4 @@ services:
     ports:
       - 8080:8080
     networks:
-      - main_network
+      - db_network

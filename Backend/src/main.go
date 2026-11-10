@@ -1,24 +1,35 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
-	"time"
+	"log"
+	"os"
 
-	"github.com/go-chi/chi/v5"
-	// "github.com/go-chi/chi/v5/middleware"
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 func main() {
+	dsn := fmt.Sprintf("postgres://%s:%s@db:5432/%s?sslmode=disable",
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DB"),
+	)
 
-	// Simple "Hello, World!" to test the docker container setup
-	for true {
-		fmt.Println("Hello, World!")
-		time.Sleep(1 * time.Second)
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal(err)
 	}
-	_ = chi.NewRouter()
-	// r.Use(middleware.Logger)
-	// r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Write([]byte("welcome"))
-	// })
-	// http.ListenAndServe(":3000", r)
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+
+	r := gin.Default()
+
+	r.GET("/api/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
+	r.Run(":50000")
 }
