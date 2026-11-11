@@ -1,29 +1,18 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
-	"os"
+	"src/internal/database"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
 )
 
 func main() {
-	dsn := fmt.Sprintf("postgres://%s:%s@db:5432/%s?sslmode=disable",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"),
-	)
-
-	db, err := sql.Open("postgres", dsn)
+	db, err := database.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := db.Ping(); err != nil {
-		log.Fatal(err)
-	}
+	defer db.Close()
 
 	r := gin.Default()
 
