@@ -7,7 +7,7 @@
 package database
 
 import (
-	"fmt"
+	"net/url"
 	"os"
 	"database/sql"
 
@@ -24,11 +24,15 @@ Kind of like a try catch, so the function return the errors,
 and the main decides if its worth exiting.
 */
 func Connect() (*sql.DB, error) {
-	dsn := fmt.Sprintf("postgres://%s:%s@db:5432/%s?sslmode=disable",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"),
-	)
+	u := url.URL {
+		Scheme: "postgres",
+		User:	url.UserPassword(os.Getenv("POSTGRES_USER"),
+				os.Getenv("POSTGRES_PASSWORD")),
+		Host:	"db:5432",
+		Path:	os.Getenv("POSTGRES_DB"),
+		RawQuery: "sslmode=disable",
+	}
+	dsn := u.String()
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
