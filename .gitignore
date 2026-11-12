@@ -1,2 +1,6 @@
 .env
 __*
+
+# Frontend
+node_modules/
+dist/

@@ -1,24 +1,34 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"log"
+	"net/http"
+	"src/internal/database"
 
-	"github.com/go-chi/chi/v5"
-	// "github.com/go-chi/chi/v5/middleware"
+	"github.com/gin-gonic/gin"
 )
+func runServer(addr string, handler http.Handler) error {
+	srv := &http.Server{
+		Addr: addr,
+		Handler: handler,
+	}
+	return srv.ListenAndServe()
+}
 
 func main() {
-
-	// Simple "Hello, World!" to test the docker container setup
-	for true {
-		fmt.Println("Hello, World!")
-		time.Sleep(1 * time.Second)
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatal(err)
 	}
-	_ = chi.NewRouter()
-	// r.Use(middleware.Logger)
-	// r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Write([]byte("welcome"))
-	// })
-	// http.ListenAndServe(":3000", r)
+	defer db.Close()
+	
+	r := gin.Default()
+
+	r.GET("/api/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
+	if err := runServer(":50000", r); err != nil{
+		log.Fatal(err)
+	}
 }
