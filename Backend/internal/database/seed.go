@@ -7,6 +7,7 @@ import (
 	"io/fs"
 )
 
+// OPF = Open Packaging Format for epub books
 func ReadOPF(path string) ([]byte, error) {
 	read, err := zip.OpenReader(path)
 	if err != nil {

@@ -7,6 +7,9 @@ Gorm is a "Object-Relational Mapping (ORM) library, so its a library where we de
 Use the following commands in your folder to add the package in the go mod file:
 - ```go get gorm.io/gorm```
 - ```go get gorm.io/driver/postgres```
+Or run
+- ```make``` (it automatically calls `make go-mod`)
+
 
 ### Importing the driver
 - use the following blockout to import the driver wherever youre actually using gorm.
