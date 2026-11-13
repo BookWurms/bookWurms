@@ -7,9 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 func runServer(addr string, handler http.Handler) error {
 	srv := &http.Server{
-		Addr: addr,
+		Addr:    addr,
 		Handler: handler,
 	}
 	return srv.ListenAndServe()
@@ -21,8 +22,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	
-	/* 
+
+	/*
 	 For creating the tables, we are using GORM instead of raw SQL
 	 this was the decision we made to standardize our table queries.
 	 see tables.go for implimentation.
@@ -35,13 +36,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	/*
+	 initialize gin server context
+	*/
 	r := gin.Default()
 
 	r.GET("/api/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	if err := runServer(":50000", r); err != nil{
+	if err := runServer(":50000", r); err != nil {
 		log.Fatal(err)
 	}
 }

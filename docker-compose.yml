@@ -37,6 +37,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./books:/books:ro
     networks:
       - caddy_network
       - db_network
