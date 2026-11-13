@@ -10,6 +10,8 @@ import (
 	"net/url"
 	"os"
 	"database/sql"
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
 
 	_ "github.com/lib/pq"
 )
@@ -42,4 +44,10 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+// OpenGorm is a wrapper to take an existing sql database connection, and reuse it
+// there should be a way to init the database with GORM as well, but not sure if its needed here.
+func OpenGorm(sqlDB *sql.DB) (*gorm.DB, error) {
+	return gorm.Open(postgres.New(postgres.Config{Conn: sqlDB}), &gorm.Config{})
 }

@@ -22,6 +22,19 @@ func main() {
 	}
 	defer db.Close()
 	
+	/* 
+	 For creating the tables, we are using GORM instead of raw SQL
+	 this was the decision we made to standardize our table queries.
+	 see tables.go for implimentation.
+	*/
+	gormDB, err := database.OpenGorm(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := database.CreateSeededBookTable(gormDB); err != nil {
+		log.Fatal(err)
+	}
+
 	r := gin.Default()
 
 	r.GET("/api/health", func(c *gin.Context) {
