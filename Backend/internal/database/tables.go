@@ -27,3 +27,21 @@ type Book struct {
 func CreateSeededBookTable(db *gorm.DB) error {
 	return db.AutoMigrate(&Book{})
 }
+
+// todo: fix me         @RoboFB work in progress, don't use
+func addSearchIndex(db *gorm.DB) error {
+	err := db.Exec("CREATE EXTENSION IF NOT EXISTS pg_trgm").Error
+	if err != nil {
+		return err
+	}
+	err = db.Exec("CREATE INDEX IF NOT EXISTS trgm_idx_title ON book USING gin (title gin_trgm_ops)").Error
+	if err != nil {
+		return err
+	}
+	err = db.Exec("CREATE INDEX IF NOT EXISTS trgm_idx_author ON book USING gin (author gin_trgm_ops)").Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

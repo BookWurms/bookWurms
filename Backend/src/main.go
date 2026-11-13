@@ -39,13 +39,13 @@ func main() {
 	/*
 	 initialize gin server context
 	*/
-	r := gin.Default()
+	router := gin.Default()
 
-	r.GET("/api/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
-	})
+	router.GET("/api/health", database.GetOk) // for testing
 
-	if err := runServer(":50000", r); err != nil {
+	router.GET("api/books", database.GetBooks(gormDB))
+
+	if err := runServer(":50000", router); err != nil {
 		log.Fatal(err)
 	}
 }
