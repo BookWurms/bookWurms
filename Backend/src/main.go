@@ -17,22 +17,22 @@ func runServer(addr string, handler http.Handler) error {
 }
 
 func main() {
-	db, err := database.Connect()
+	gormDB, err := database.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
-	/*
-	 For creating the tables, we are using GORM instead of raw SQL
-	 this was the decision we made to standardize our table queries.
-	 see tables.go for implimentation.
-	*/
-	gormDB, err := database.OpenGorm(db)
+	sqlDB, err := gormDB.DB()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer sqlDB.Close()
+
 	if err := database.CreateSeededBookTable(gormDB); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := database.SeedAllBooks(gormDB, "/books"); err != nil {
 		log.Fatal(err)
 	}
 
