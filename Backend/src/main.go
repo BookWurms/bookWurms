@@ -7,28 +7,45 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 func runServer(addr string, handler http.Handler) error {
 	srv := &http.Server{
-		Addr: addr,
+		Addr:    addr,
 		Handler: handler,
 	}
 	return srv.ListenAndServe()
 }
 
 func main() {
-	db, err := database.Connect()
+	gormDB, err := database.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
-	
-	r := gin.Default()
 
-	r.GET("/api/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
-	})
+	sqlDB, err := gormDB.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sqlDB.Close()
 
-	if err := runServer(":50000", r); err != nil{
+	if err := database.CreateSeededBookTable(gormDB); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := database.SeedAllBooks(gormDB, "/books"); err != nil {
+		log.Fatal(err)
+	}
+
+	/*
+	 initialize gin server context
+	*/
+	router := gin.Default()
+
+	router.GET("/api/health", database.GetOk) // for testing
+
+	router.GET("api/books", database.GetBooks(gormDB))
+
+	if err := runServer(":50000", router); err != nil {
 		log.Fatal(err)
 	}
 }
