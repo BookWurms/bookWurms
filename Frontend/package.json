@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/"
+    "build-index-only": "rm -rf dist && mkdir -p dist && cp index.html dist/",
+    "build": "rm -rf dist && mkdir -p dist && cp index.html booklist.js dist/"
   }
 }
