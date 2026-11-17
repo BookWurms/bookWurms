@@ -33,10 +33,18 @@ func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
 	// }
 
 	//select from db
-	return func(context *gin.Context) {
+	return func(webpage_content *gin.Context) {
+
 		var booksByAuthor []Book
-		//SELECT * FROM books WHERE author = "Fyodor";
-		myDatabase.Where("author = ?", "Fyodor Dostoevsky").Find(&booksByAuthor)
-		context.IndentedJSON(http.StatusOK, booksByAuthor)
+
+		// //SELECT * FROM books WHERE author = "Fyodor";
+		// myDatabase.Where("author = ?", "Fyodor Dostoevsky").Find(&booksByAuthor)
+
+		////localhost:8443/api/books/author?query_author=Fyodor%20Dostoevsky
+		authorToBeSearchedFor := webpage_content.Query("query_author")
+		//SELECT * FROM books WHERE author = authorToBeSearchedFor
+		myDatabase.Where("author = ?", authorToBeSearchedFor).Find(&booksByAuthor)
+
+		webpage_content.IndentedJSON(http.StatusOK, booksByAuthor)
 	}
 }
