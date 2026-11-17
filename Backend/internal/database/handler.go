@@ -1,6 +1,7 @@
 package database
 
 import (
+	"archive/zip"
 	"fmt"
 	"log"
 	"net/http"
@@ -45,9 +46,39 @@ func UploadBook(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		dst := filepath.Join("/books", filepath.Base(file.Filename))
-		SeedBook(db, dst)
 
-		c.SaveUploadedFile(file, dst)
-		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+		upload, err := file.Open()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "File could not be read"})
+			return
+		}
+		defer upload.Close()
+
+		//check if its actually a compressed zip file
+		// without this, a file renamed as .epub would cause gin to panic.
+		readZip, err := zip.NewReader(upload, file.Size)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": ".epub file is invalid"})
+			return
+		}
+
+		//ok so now we can take the first file, which in an epub should always be mimetype, and the
+		//exact byte size should be 20. if this isnt true, we send a bad request. Only then, do 
+		// we actually attempt saving and seeding.
+		// https://www.edrlab.org/open-standards/anatomy-of-an-epub-3-file/
+		// This is still vulnerable, but for our use-case, we can either leave this as is, or go further.
+		firstLine := readZip.File[0]
+		if firstLine.Name == "mimetype" && firstLine.UncompressedSize64 == 20 {
+			fmt.Printf("Filename: %s || Size: %d \n", readZip.File[0].Name, firstLine.UncompressedSize64)
+
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": ".epub file is invalid"})
+			return
+		}
+
+		c.SaveUploadedFile(file, dst) //physically save this to the /books after all parsing is done.
+		SeedBook(db, dst)
+		//debug print
+		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded successfully", file.Filename))
 	}
 }
