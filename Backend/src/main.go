@@ -45,8 +45,7 @@ func main() {
 
 	router.GET("api/books", database.GetBooks(gormDB))
 
-	//nsloniow
-	//get all book by one auhor from table
+	//get all data sets by one author, to be searched for, from table books
 	router.GET("/api/books/author", database.GetBooksByAuthor(gormDB))
 
 	if err := runServer(":50000", router); err != nil {

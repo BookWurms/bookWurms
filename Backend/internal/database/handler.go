@@ -23,29 +23,28 @@ func GetOk(context *gin.Context) {
 	context.JSON(200, gin.H{"status": "ok"})
 }
 
-// nsloniow
 // return all books into JSON from table books for one particulare author
 func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
 
-	// //printing 'cool'
-	// return func(context *gin.Context) {
-	// 	context.JSON(http.StatusOK, "cool")
-	// }
-
-	//select from db
+	//select from table books, as it is structure Book,
 	return func(webpage_content *gin.Context) {
 
 		var booksByAuthor []Book
 
-		// //SELECT * FROM books WHERE author = "Fyodor";
-		// myDatabase.Where("author = ?", "Fyodor Dostoevsky").Find(&booksByAuthor)
-
 		////localhost:8443/api/books/author?query_author=Fyodor%20Dostoevsky
 		authorToBeSearchedFor := webpage_content.Query("query_author")
+
+		//print inside docker container 'backend' = where this runs
+		//docker compose logs -f backend
 		println("%s", authorToBeSearchedFor)
-		//SELECT * FROM books WHERE author = authorToBeSearchedFor
+
+		//SELECT * FROM books WHERE author = authorToBeSearchedFor and save in booksByAuthor
+		//GORM names a table created from a struct with small first letter and pluralising it
+		//struct Book will be table books.
+		//GORM looks at type of booksByAuthor and Books is tied to table books
 		myDatabase.Where("author = ?", authorToBeSearchedFor).Find(&booksByAuthor)
 
+		//format result, the values in booksByAuthor, into JSON
 		webpage_content.IndentedJSON(http.StatusOK, booksByAuthor)
 	}
 }
