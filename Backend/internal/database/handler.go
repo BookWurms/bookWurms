@@ -22,3 +22,8 @@ func GetBooks(db *gorm.DB) gin.HandlerFunc {
 func GetOk(context *gin.Context) {
 	context.JSON(200, gin.H{"status": "ok"})
 }
+
+// migrate the main test here later.
+// func UploadBook(db *gorm.DB) gin.HandlerFunc {
+
+// }
