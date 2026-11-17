@@ -24,6 +24,36 @@ console.log(autofill__query_author)
 //fill authorToBeSearchedFor with value from URL
 if (autofill__query_author) {
     authorToBeSearchedFor.value = autofill__query_author
+<<<<<<< HEAD
+=======
+
+<<<<<<< HEAD
+    booklist_byAuthor(authorToBeSearchedFor)
+=======
+    //Uniform Resource Identifier
+    //Uniform Resource Locator
+    //encode 
+    //? starts a query parameter
+    //= separates parameter name and value
+    //& separates multiple parameters
+    //%20 represents one space
+    //localhost:8443/api/books/author?query_author=Fyodor%20Dostoevsky
+    // fetch("/api/books/author?query_author=" + encodeURI("Fyodor Dostoevsky"))
+    fetch("/api/books/author?query_author=" + encodeURI(authorToBeSearchedFor.value))
+        .then(response => response.json())
+
+        .then(books => {
+            document.getElementById("booksForOneAuthor").textContent = ""
+
+            books.forEach(book => {
+                document.getElementById("booksForOneAuthor").appendChild(document.createElement("span"))
+                document.getElementById("booksForOneAuthor").lastChild.textContent = book.Author + " - " + book.Title
+                document.getElementById("booksForOneAuthor").appendChild(document.createElement("br"))
+            })
+        })
+        .catch(error => console.log(error))
+>>>>>>> 482ac64 (feat:List appears automatically after auto fill input text field from bookmarked URL.)
+>>>>>>> e39ba65 (feat: List appears automatically after auto fill input text field from bookmarked URL.)
 }
 
 // take each input
