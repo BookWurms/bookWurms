@@ -45,6 +45,10 @@ func main() {
 
 	router.GET("api/books", database.GetBooks(gormDB))
 
+	//nsloniow
+	//get all book by one auhor from table
+	router.GET("/api/books/author", database.GetBooksByAuthor(gormDB))
+
 	if err := runServer(":50000", router); err != nil {
 		log.Fatal(err)
 	}

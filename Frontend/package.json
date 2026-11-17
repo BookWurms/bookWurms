@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build-index-only": "rm -rf dist && mkdir -p dist && cp index.html dist/",
-    "build": "rm -rf dist && mkdir -p dist && cp index.html booklist.js dist/"
+    "build-booklist-only": "rm -rf dist && mkdir -p dist && cp index.html booklist.js dist/",
+    "build": "rm -rf dist && mkdir -p dist && cp index.html booklist.js searchBooklist.js dist/"
   }
 }

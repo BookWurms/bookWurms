@@ -22,3 +22,21 @@ func GetBooks(db *gorm.DB) gin.HandlerFunc {
 func GetOk(context *gin.Context) {
 	context.JSON(200, gin.H{"status": "ok"})
 }
+
+// nsloniow
+// return all books into JSON from table books for one particulare author
+func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
+
+	// //printing 'cool'
+	// return func(context *gin.Context) {
+	// 	context.JSON(http.StatusOK, "cool")
+	// }
+
+	//select from db
+	return func(context *gin.Context) {
+		var booksByAuthor []Book
+		//SELECT * FROM books WHERE author = "Fyodor";
+		myDatabase.Where("author = ?", "Fyodor Dostoevsky").Find(&booksByAuthor)
+		context.IndentedJSON(http.StatusOK, booksByAuthor)
+	}
+}
