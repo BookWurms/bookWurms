@@ -15,17 +15,28 @@
 //     .catch(error => console.log(error))
 
 
-//get author from input text field "query_author"
 const authorToBeSearchedFor = document.getElementById("query_author")
+
+//bookmarked search URL
+//get parameters from URL bar
+const autofill__query_author = new URLSearchParams(window.location.search).get("query_author")
+console.log(autofill__query_author)
+//fill authorToBeSearchedFor with value from URL
+if (autofill__query_author) {
+    authorToBeSearchedFor.value = autofill__query_author
+}
 
 // take each input
 // authorToBeSearchedFor.addEventListener("input", function () {
 
+//get author from input text field "query_author"
 //take on enter hole field content
 authorToBeSearchedFor.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         console.log(authorToBeSearchedFor.value)
 
+        //change URL in address bar with search query, so we can bookmark it, have it in history 
+        history.pushState(null, "", "/?query_author=" + encodeURI(authorToBeSearchedFor.value))
         // console.log(authorToBeSearchedFor.value)
         //Uniform Resource Identifier
         //Uniform Resource Locator
