@@ -42,6 +42,7 @@ func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
 
 		////localhost:8443/api/books/author?query_author=Fyodor%20Dostoevsky
 		authorToBeSearchedFor := webpage_content.Query("query_author")
+		println("%s", authorToBeSearchedFor)
 		//SELECT * FROM books WHERE author = authorToBeSearchedFor
 		myDatabase.Where("author = ?", authorToBeSearchedFor).Find(&booksByAuthor)
 

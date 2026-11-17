@@ -11,11 +11,23 @@
 	<h1>Hello World</h1>
 	<p>bookWurms frontend placeholder (static files served by Caddy).</p>
 
-	<!--book list-->
-	<div id="author">
+	<!-- book list -->
+	<div id="books">
 		Loading...
 	</div>
-	<!-- <p id="author"> Loading...</p> -->
+	<script src="/booklist.js"></script>
+
+	<!-- list for one author
+	<p id="author"> Loading...</p> -->
+
+	<!--list for author entered into text field  -->
+	<!-- change author to query_author in searchBooklist.js -->
+	<!-- enter author into text field -->
+	<input type="text" id="query_author">
+	<!-- result list -->
+	<div id="booksForOneAuthor">
+		Loading...
+	</div>
 	<script src="/searchBooklist.js"></script>
 
 </body>
