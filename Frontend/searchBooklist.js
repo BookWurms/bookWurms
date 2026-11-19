@@ -35,7 +35,7 @@ const autofill__query_author = new URLSearchParams(window.location.search).get("
 // const autofill__searchable = new URLSearchParams(window.location.search).get("searchable")
 console.log(autofill__query_author)
 // console.log(autofill__searchable)
-console.log(searchable.value)
+// console.log(autofill_searchable.value)
 
 //fill authorToBeSearchedFor with value from URL and show list
 if (autofill__query_author) {

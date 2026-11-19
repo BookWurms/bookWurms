@@ -2,6 +2,7 @@ package database
 
 import (
 	"net/http"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -46,5 +47,23 @@ func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
 
 		//format result, the values in booksByAuthor, into JSON
 		webpage_content.IndentedJSON(http.StatusOK, booksByAuthor)
+	}
+}
+
+// get all fields from structure Book that are searchable for dropdown list
+func GetFieldsTagedSearchable() gin.HandlerFunc {
+
+	return func(webpage_context *gin.Context) {
+		// name of first field
+		// webpage_context.JSON(200, reflect.TypeOf(Book{}).Field(1).Name)
+
+		//all fields
+		searchableFields := []string{}
+		for field_count := 0; field_count < reflect.TypeOf(Book{}).NumField(); field_count++ {
+			if (reflect.TypeOf(Book{}).Field(field_count).Tag.Get("searchable") == "true") {
+				searchableFields = append(searchableFields, reflect.TypeOf(Book{}).Field(field_count).Name)
+			}
+		}
+		webpage_context.JSON(200, searchableFields)
 	}
 }
