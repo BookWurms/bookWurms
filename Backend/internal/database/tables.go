@@ -10,16 +10,18 @@ import (
 	"gorm.io/gorm"
 )
 
+// searchable:"true" is GORM metadata tag for this field/column to be allowed to
+// be used for allowing in search filter
 type Book struct {
 	ID              int64     `gorm:"primaryKey"`
-	Title           string    `gorm:"type:text;not null"`
-	Author          string    `gorm:"type:text;not null"`
+	Title           string    `gorm:"type:text;not null" searchable:"true"`
+	Author          string    `gorm:"type:text;not null" searchable:"true"`
 	Summary         *string   `gorm:"type:text"`
 	DescriptionHTML *string   `gorm:"column:description_html;type:text"`
 	Cover           *string   `gorm:"type:text"`
 	Ebook           string    `gorm:"type:text;not null;uniqueIndex"`
-	ISBN            *string   `gorm:"column:isbn;type:text"`
-	WordCount       *int32    `gorm:"type:integer"`
+	ISBN            *string   `gorm:"column:isbn;type:text" searchable:"true"`
+	WordCount       *int32    `gorm:"type:integer" searchable:"true"`
 	SourceURL       *string   `gorm:"type:text;uniqueIndex"`
 	CreatedAt       time.Time `gorm:"type:timestamptz;not null; default:now()"`
 }
