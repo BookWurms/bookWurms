@@ -2,8 +2,9 @@ package database
 
 import (
 	"archive/zip"
-	"fmt"
 	"log"
+
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"reflect"
@@ -41,7 +42,7 @@ func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
 
 		//print inside docker container 'backend' = where this runs
 		//docker compose logs -f backend
-		println("%s", authorToBeSearchedFor)
+		fmt.Println(authorToBeSearchedFor)
 
 		//SELECT * FROM books WHERE author = authorToBeSearchedFor and save in booksByAuthor
 		//GORM names a table created from a struct with small first letter and pluralising it
@@ -125,5 +126,22 @@ func UploadBook(db *gorm.DB) gin.HandlerFunc {
 		SeedBook(db, dst)
 		//debug print
 		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded successfully", file.Filename))
+	}
+}
+
+// get all books that match text within field
+func SearchBooklistInAnyField(datasbase *gorm.DB) gin.HandlerFunc {
+	return func(webpage_context *gin.Context) {
+
+		var booklist []Book
+
+		field := webpage_context.Query("field")
+		text := webpage_context.Query(("query_author"))
+		log.Println(field, text)
+		// datasbase.Where(field+" = ?", "Fyodor Dostoevsky").Find(&booklist)
+		datasbase.Where(field+"= ?", text).Find(&booklist)
+		//format result to JSON)
+
+		webpage_context.JSON(200, booklist)
 	}
 }

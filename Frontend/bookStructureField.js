@@ -2,7 +2,7 @@ fetch("/api/books/searchableFields")
     .then(response => response.json())
 
     .then(fields => {
-        document.getElementById("dropdownSearchable").innerHTML = ""
+        document.getElementById("bookStructureField").innerHTML = ""
 
         //one field name only
         // document.getElementById("dropdownSearchable").appendChild(document.createElement("Option"))
@@ -11,10 +11,11 @@ fetch("/api/books/searchableFields")
 
         // all fields
         fields.forEach(field => {
-            document.getElementById("dropdownSearchable").appendChild(document.createElement("Option"))
-            document.getElementById("dropdownSearchable").lastChild.value = field
-            document.getElementById("dropdownSearchable").lastChild.textContent = field
+            document.getElementById("bookStructureField").appendChild(document.createElement("Option"))
+            document.getElementById("bookStructureField").lastChild.value = field
+            document.getElementById("bookStructureField").lastChild.textContent = field
         })
 
     })
     .catch(error => console.log(error))
+
