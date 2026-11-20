@@ -1,6 +1,6 @@
-# BookWurms: Product Description
+# bookWurms: Product Description
 
-BookWurms is a social media platform that revolves all around books. From sharing what you are reading, leaving bookreviews, browsing through friends' libraries, searching for specific books or reading on the built in e-reader. BookWurms has it all to keep you connected, inspired and hungry for more books!
+bookWurms is a social media platform that revolves all around books. From sharing what you are reading, leaving bookreviews, browsing through friends' libraries, searching for specific books or reading on the built in e-reader. bookWurms has it all to keep you connected, inspired and hungry for more books!
 Say you want to read a book and want to check if one of your friends has it standing in a bookshelf at home? Put the name in the search mask and see all your friends that have it. And if your lucky they left a book review for you!
 
 ## Initial Setup
@@ -31,16 +31,16 @@ Others can see this page and can access your library (and posts and history) fro
 There is also a status for sharing what book you are *currently reading*. [optional]  
 You can tags for your favorite genres or authors you like. [optional]  
 
-### The reel
+### The feed
 Core of every social media platform. Here you see a timeline of all the things your friends are doing. You will see:
 * Additions to libraries
 * New Bookreviews
 * Changes to *currently reading* [optional]
 * Freely desinged posts (sharing thoughts or quotes; asking for recommendations) [optional]
 
-### Comments
+### Comments and likes
 
-The items in the reel will appear as a post and have to function to comment on them.
+The items in the feed will appear as a post and have to function to like or comment on them. 
 
 ### Currently reading [optional] 
 
