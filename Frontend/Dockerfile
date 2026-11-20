@@ -12,4 +12,4 @@ RUN npm run build
 
 FROM caddy:2-alpine
 
-COPY --from=build /app/dist /srv/frontend
+COPY --from=build /app/build /srv/frontend

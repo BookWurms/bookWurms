@@ -57,6 +57,23 @@ services:
     networks:
       - caddy_network
 
+  frontend-dev:
+    image: node:24-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      API_TARGET: http://backend:50000
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - caddy_network
+    depends_on:
+      - backend
+    profiles: ["dev"]
+  
   # only for development, not for production because of security reasons
   adminer:
     image: adminer:latest

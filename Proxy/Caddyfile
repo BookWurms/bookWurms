@@ -14,7 +14,7 @@ localhost {
 	}
 	handle {
 		root * /srv/frontend
-		try_files {path} /index.html
+		try_files {path} {path}/ /index.html
 		file_server
 	}
 }
