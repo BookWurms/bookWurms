@@ -46,6 +46,12 @@ func main() {
 	router.GET("api/books", database.GetBooks(gormDB))
 	router.POST("api/books", database.UploadBook(gormDB))
 
+	//get all data sets by one author, to be searched for, from table books
+	router.GET("/api/books/author", database.GetBooksByAuthor(gormDB))
+
+	//get all fields from structure Book that are searchable for dropdown list
+	router.GET("/api/books/searchableFields", database.GetFieldsTagedSearchable())
+
 	if err := runServer(":50000", router); err != nil {
 		log.Fatal(err)
 	}

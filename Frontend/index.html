@@ -1,23 +1,48 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>bookWurms</title>
 </head>
+
 <body>
 	<h1>Hello World</h1>
 	<p>bookWurms frontend placeholder (static files served by Caddy).</p>
-	
-	<!--book list-->
+
+	<!-- book list -->
 	<div id="books">
 		Loading...
 	</div>
+
 	<script src="/booklist.js"></script>
 
+	<!-- dropdown for searchable fields/columns -->
+	<!-- <select id="searchable">
+		<option value="author"> Author </option>
+	</select> -->
+	<!-- GORM field tag 'searchable' -->
+	<!-- <div id="dropdownSeachable"> Loading...</div> -->
+	<select id="dropdownSearchable">
+		<script src="/searchableDropdown.js"></script>
+	</select>
+
+	<!--list for author entered into text field  -->
+	<!-- enter author into text field -->
+	<input type="text" id="query_author">
+	<!-- result list -->
+	<div id="booksForOneAuthor">
+		Loading...
+	</div>
+	<script src="/searchBooklist.js"></script>
+
+
+	<h2>Upload an eBook</h2>
 	<form action="/api/books" method="post" enctype="multipart/form-data">
-	<input type="file" name="ebook" accept=".epub">
-	<input type="submit">
-</form>
+		<input type="file" name="ebook" accept=".epub">
+		<input type="submit">
+	</form>
 </body>
+
 </html>
