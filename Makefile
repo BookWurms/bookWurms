@@ -40,7 +40,13 @@ nuke-volumes:
 .PHONY: all re up down build logs ps stats volumes nuke-volumes
 
 go-mod:
-	cd Backend && go mod tidy
+	cd Backend/ && go mod tidy
+
+go-test:
+	cd Backend/ && go test ./...
+
+go-test-verbose:
+	cd Backend/ && go test -v -count=1 ./...
 
 help:
 	@echo "Options:"
@@ -54,7 +60,9 @@ help:
 	@echo "  stats         - Show resource usage statistics of the containers"
 	@echo "  volumes       - List Docker volumes"
 	@echo "  nuke-volumes  - DELETE ALL the volumes with down -v"
-	@echo "  go-mod        - Run go mod tidy in the backend"
+	@echo "  go-mod        - Run go mod tidy in the Backend"
+	@echo "  go-test       - Run go test ./... in the Backend"
+	@echo "  go-test-verbose - Run go test -v -count=1 ./... in the Backend"
 	@echo "  help          - Show this help"
 
-.PHONY: go-mod help
+.PHONY: go-mod go-test go-test-verbose help
