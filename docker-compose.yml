@@ -57,6 +57,35 @@ services:
     networks:
       - caddy_network
 
+# svelte version of caddy, remove old one when migration is completed
+  frontend2-caddy:
+    build: ./Frontend2
+    restart: unless-stopped
+    ports:
+      - "8444:443"
+    volumes:
+      - ./Proxy:/etc/caddy
+    networks:
+      - caddy_network
+# node:24-alpine is needed since we need node to run vite. the commands will run an intall for vite. 
+# without this, each person needs to run the same commands to get it working.
+  frontend-dev:
+    image: node:24-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    environment:
+      API_TARGET: http://backend:50000
+    volumes:
+      - ./Frontend2:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - caddy_network
+    depends_on:
+      - backend
+    profiles: ["dev"]
+
   # only for development, not for production because of security reasons
   adminer:
     image: adminer:latest
