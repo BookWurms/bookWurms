@@ -37,13 +37,14 @@ func main() {
 	}
 
 	/*
-	 initialize gin server context
+	 initialize gin server context and register handlers
 	*/
 	router := gin.Default()
+	router.MaxMultipartMemory = 8 << 20 // 8 MiB size constraint for post
 
 	router.GET("/api/health", database.GetOk) // for testing
-
 	router.GET("api/books", database.GetBooks(gormDB))
+	router.POST("api/books", database.UploadBook(gormDB))
 
 	//get all data sets by one author, to be searched for, from table books
 	router.GET("/api/books/author", database.GetBooksByAuthor(gormDB))

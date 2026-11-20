@@ -15,6 +15,7 @@
 	<div id="books">
 		Loading...
 	</div>
+
 	<script src="/booklist.js"></script>
 
 	<!-- dropdown for searchable fields/columns -->
@@ -36,6 +37,12 @@
 	</div>
 	<script src="/searchBooklist.js"></script>
 
+
+	<h2>Upload an eBook</h2>
+	<form action="/api/books" method="post" enctype="multipart/form-data">
+		<input type="file" name="ebook" accept=".epub">
+		<input type="submit">
+	</form>
 </body>
 
 </html>

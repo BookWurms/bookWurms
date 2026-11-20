@@ -38,7 +38,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./books:/books:ro
+      - ./books:/books
     networks:
       - caddy_network
       - db_network
