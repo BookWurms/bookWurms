@@ -52,6 +52,9 @@ func main() {
 	//get all fields from structure Book that are searchable for dropdown list
 	router.GET("/api/books/searchableFields", database.GetFieldsTagedSearchable())
 
+	//get books that match text in chosen field
+	router.GET("/api/books/search", database.SearchBooklistInAnyField(gormDB))
+
 	if err := runServer(":50000", router); err != nil {
 		log.Fatal(err)
 	}
