@@ -20,6 +20,9 @@ down:
 build:
 	$(DOCKER_COMPOSE) build
 
+build-new:
+	$(DOCKER_COMPOSE) build --no-cache
+
 logs:
 	$(DOCKER_COMPOSE) logs
 
@@ -37,13 +40,14 @@ nuke-volumes:
 	@echo "Delete all volumes(db, caddy)? [y/N] " && read ans && [ "$$ans" = y ]
 	$(DOCKER_COMPOSE) down -v
 
-.PHONY: all re up down build logs ps stats volumes nuke-volumes
+.PHONY: all re up down build build-new logs ps stats volumes nuke-volumes
 
 go-mod:
 	cd Backend/ && go mod tidy
 
 go-test:
-	cd Backend/ && go test ./...
+	docker compose --profile test up -d --wait db-test
+	cd Backend/ && TEST_DATABASE_URL="host=localhost user=test_user password=test_password dbname=post_db_test port=5433 sslmode=disable" go test ./...
 
 go-test-verbose:
 	cd Backend/ && go test -v -count=1 ./...

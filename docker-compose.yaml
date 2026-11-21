@@ -101,6 +101,7 @@ services:
   # TODO: only for development, maybe remove later; This db is entirely for testing database writes and reads without modifying the real database
   db-test:
     image: postgres:18
+    profiles: [ "test" ]
     environment:
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test_password
@@ -111,3 +112,8 @@ services:
       - /var/lib/postgresql
     networks:
       - db_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test_user -d post_db_test" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
