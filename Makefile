@@ -4,7 +4,7 @@
 
 
 NAME :=				bookWurms
-COMPOSE_FILE :=		docker-compose.yml
+COMPOSE_FILE :=		docker-compose.yaml
 DOCKER_COMPOSE :=	docker compose -f $(COMPOSE_FILE)
 
 all: go-mod up
