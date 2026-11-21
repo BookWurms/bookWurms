@@ -137,7 +137,7 @@ func SearchBooklistInAnyField(datasbase *gorm.DB) gin.HandlerFunc {
 
 		field := webpage_context.Query("field")
 		text := webpage_context.Query(("query_author"))
-		log.Println(field, text)
+		log.Println("140", field, text)
 		// datasbase.Where(field+" = ?", "Fyodor Dostoevsky").Find(&booklist)
 		datasbase.Where(field+"= ?", text).Find(&booklist)
 		//format result to JSON)

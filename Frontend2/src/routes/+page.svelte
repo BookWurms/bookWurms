@@ -1,21 +1,21 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount } from "svelte";
 	/* 
 	onMount is sveltes function that says "do this when the page is opened." 
 	So an event handler for onPageOpened.
 	 */
 
-	let books = $state([]); 
+	let books = $state([]);
 	// we can create variables like this, in our case its a book array
 	// State means that the variable is REACTIVE. so the variable redraws the page when it changes.
-	let message = $state('');
+	let message = $state("");
 
 	/* 
 	This one should be self explanitory but async function just means that its asynchronous and
 	will wait for the data. in this case if we had a ton of books to load or users, it streams it in the background.
 	*/
 	async function loadBooks() {
-		const response = await fetch('/api/books');
+		const response = await fetch("/api/books");
 		books = await response.json();
 	}
 
@@ -26,9 +26,25 @@
 	async function upload(event) {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
-		const response = await fetch('/api/books', { method: 'POST', body: formData });
+		const response = await fetch("/api/books", {
+			method: "POST",
+			body: formData,
+		});
 		message = await response.text();
 		await loadBooks();
+	}
+
+	//text input field for text to be searched for
+	let query_author = $state("");
+	//booklist as result of our search
+	let booksForOneAuthor = $state([]);
+	async function searchBooksByAuthor() {
+		const response = await fetch(
+			"/api/books/search?field=Author&query_author=${encodeURIComponent(query_author)}",
+		);
+		console.log(response.status);
+		booksForOneAuthor = await response.json();
+		console.log(" ", booksForOneAuthor);
 	}
 
 	//after this is all defined, we just call the get all books API like this.
@@ -39,11 +55,18 @@
 
 <h2>GET All Books</h2>
 <!-- each just means for each, so for each book, print title and author. else say no books or loading. -->
-{#each books as book} 
+{#each books as book}
 	<p>{book.Title} by {book.Author}</p>
 {:else}
 	<p>loading...</p>
 {/each}
+
+<h2>GET Books by Search</h2>
+<input type="text" bind.value={query_author} placeholder="Enter name" />
+<!-- call async function to get database results via /api/books/search -->
+<button onclick={searchBooksByAuthor}>Submit</button>
+{#each booksForOneAuthor as book}
+	<p>{book.Title} by {book.Author}</p>{/each}
 
 <h2>Upload a book</h2>
 <form onsubmit={upload}>
