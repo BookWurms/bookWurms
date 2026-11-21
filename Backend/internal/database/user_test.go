@@ -258,6 +258,20 @@ func TestGetUserByIDNotFound(t *testing.T) {
 	}
 }
 
+func TestGetUserByIDZero(t *testing.T) {
+	db := openTestDB(t)
+
+	user, err := GetUserByID(db, 0)
+
+	if user != nil {
+		t.Errorf("expected nil user, got %v", user)
+	}
+
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		t.Errorf("expected gorm.ErrRecordNotFound, got %v", err)
+	}
+}
+
 func TestGetUserByEmailRejectsEmptyEmail(t *testing.T) {
 	db := openTestDB(t)
 

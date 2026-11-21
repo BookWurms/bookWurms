@@ -61,6 +61,10 @@ func GetUserByEmail(db *gorm.DB, email string) (*User, error) {
 }
 
 func GetUserByID(db *gorm.DB, id uint) (*User, error) {
+	if id == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
 	var user User
 
 	result := db.First(&user, id)
