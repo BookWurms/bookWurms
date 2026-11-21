@@ -28,6 +28,10 @@ func main() {
 	}
 	defer sqlDB.Close()
 
+	if err := database.MigrateUsers(gormDB); err != nil {
+		log.Fatal(err)
+	}
+
 	if err := database.CreateSeededBookTable(gormDB); err != nil {
 		log.Fatal(err)
 	}
