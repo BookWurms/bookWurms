@@ -92,10 +92,12 @@ $(NODE_DIR)/bin/node:
 .PHONY: help
 # ---------------------------------------------------------------------------
 
+init-git-hooks:
+	git config core.hooksPath .githooks
 pre-commit-checks: all
 pre-push-checks: all go-test
 
-.PHONY: go-mod go-test go-test-verbose pre-commit-checks pre-push-checks
+.PHONY: go-mod go-test go-test-verbose init-git-hooks pre-commit-checks pre-push-checks
 
 help:
 	@echo "Options:"
