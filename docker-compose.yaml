@@ -57,7 +57,7 @@ services:
     networks:
       - caddy_network
 
-# svelte version of caddy, remove old one when migration is completed
+  # svelte version of caddy, remove old one when migration is completed
   frontend2-caddy:
     build: ./Frontend2
     restart: unless-stopped
@@ -67,8 +67,8 @@ services:
       - ./Proxy:/etc/caddy
     networks:
       - caddy_network
-# node:24-alpine is needed since we need node to run vite. the commands will run an intall for vite. 
-# without this, each person needs to run the same commands to get it working.
+  # node:24-alpine is needed since we need node to run vite. the commands will run an intall for vite. 
+  # without this, each person needs to run the same commands to get it working.
   frontend-dev:
     image: node:24-alpine
     working_dir: /app
@@ -84,7 +84,7 @@ services:
       - caddy_network
     depends_on:
       - backend
-    profiles: ["dev"]
+    profiles: [ "dev" ]
 
   # only for development, not for production because of security reasons
   adminer:
@@ -97,3 +97,23 @@ services:
       - 8080:8080
     networks:
       - db_network
+
+  # TODO: only for development, maybe remove later; This db is entirely for testing database writes and reads without modifying the real database
+  db-test:
+    image: postgres:18
+    profiles: [ "test" ]
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: post_db_test
+    ports:
+      - "127.0.0.1:5433:5432"
+    tmpfs:
+      - /var/lib/postgresql
+    networks:
+      - db_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U test_user -d post_db_test" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
