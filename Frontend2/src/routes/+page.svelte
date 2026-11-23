@@ -87,7 +87,7 @@
 		).get("field");
 
 		// use values from URL and show list
-		// fill authorToBeSearchedFor
+		// fill text input field
 		if (autofill__search_text) {
 			search_text = autofill__search_text;
 
@@ -96,7 +96,6 @@
 				optionField = autofill__optionField;
 			}
 		}
-		// searchForBooks();
 	});
 </script>
 
