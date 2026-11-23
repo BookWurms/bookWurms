@@ -1,3 +1,57 @@
 # bookWurms
 
-bookWurms
+
+TODO: @ThiloSchueller add a project description
+
+
+---
+
+### Server
+- Proxy(Caddy)
+   - Fronted
+   - Backend 
+     - Go Server
+     - PostgresSQL DB
+
+
+### Dev setup
+- There will be a `make dev` that starts all servers and enables hot/live reloading of go backend and svelte frontend, for much faster feedback cycles
+- CI: Github workflow that runs at Pull Requests
+- Git-Hooks: run `make init-git-hooks` for local setup
+
+### Backend
+- Go backend with `Gin` as server framework and `GORM` as ORM
+- Postgres as Database
+
+
+
+### Frontend (old)
+
+### Frontend2 (new)
+Svelte as Frontend framework. The Web-Pages are in `routes/` there needs to be a directory with the name of the route and the page is named every time `+page.svelte`
+
+
+### Data
+in `books/` some example EPUB(ebook) files. At the moment they are automatically added to the database.
+
+
+
+### Building
+- docker setup with `docker-compose.yaml` and `Makefile` -> just use `make help` 
+- `make init-git-hooks` needs to run one to set up local git hooks `./githooks`
+
+### VS Code Extensions
+- In `.vscode/extensions.json` is the list of regimented extensions like the name says.
+
+
+### Documentation
+- Readme (this document)
+- docs/
+  - Gorm (Go ORM package)
+  - server Structure
+  - Project Rules
+
+
+
+
+### Recurse Links
