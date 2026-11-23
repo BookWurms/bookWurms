@@ -39,9 +39,15 @@
 	//booklist as result of our search
 	let booksForOneAuthor = $state([]);
 	async function searchBooksByAuthor() {
+		console.log(query_author);
 		const response = await fetch(
-			"/api/books/search?field=Author&query_author=${encodeURIComponent(query_author)}",
+			"/api/books/search?field=Author&query_author=" +
+				encodeURIComponent(query_author),
 		);
+
+		// fetch("/api/books/search?field=" + encodeURIComponent(field) +
+		// "&query_author=" + encodeURIComponent(text))
+
 		console.log(response.status);
 		booksForOneAuthor = await response.json();
 		console.log(" ", booksForOneAuthor);
@@ -62,7 +68,7 @@
 {/each}
 
 <h2>GET Books by Search</h2>
-<input type="text" bind.value={query_author} placeholder="Enter name" />
+<input type="text" bind:value={query_author} placeholder="Enter name" />
 <!-- call async function to get database results via /api/books/search -->
 <button onclick={searchBooksByAuthor}>Submit</button>
 {#each booksForOneAuthor as book}
