@@ -46,21 +46,19 @@
 	//text input field for text to be searched for
 	let search_text = $state("");
 	//booklist as result of our search
-	let booksForOneAuthor = $state([]);
-	async function searchBooksByAuthor() {
+	let booksFound = $state([]);
+	async function searchForBooks() {
 		console.log(search_text);
 		const response = await fetch(
-			// "/api/books/search?field=Author&query_author=" +
-			// 	encodeURIComponent(search_text),
 			"/api/books/search?field=" +
 				encodeURIComponent(optionField) +
-				"&query_author=" +
+				"&search_text=" +
 				encodeURIComponent(search_text),
 		);
 
 		console.log(response.status);
-		booksForOneAuthor = await response.json();
-		console.log(" ", booksForOneAuthor);
+		booksFound = await response.json();
+		console.log(" ", booksFound);
 	}
 
 	//after this is all defined, we just call the get all books API like this.
@@ -91,10 +89,20 @@
 	{/each}
 </select>
 <!-- text input field -->
-<input type="text" bind:value={search_text} placeholder="Enter name" />
+<input
+	type="text"
+	bind:value={search_text}
+	placeholder="Enter name"
+	onkeydown={(event) => {
+		if (event.key === "Enter") {
+			searchForBooks();
+		}
+	}}
+/>
+
 <!-- call async function to get database results via /api/books/search -->
-<button onclick={searchBooksByAuthor}>Submit</button>
-{#each booksForOneAuthor as book}
+<button onclick={searchForBooks}>Submit</button>
+{#each booksFound as book}
 	<p>{book.Title} by {book.Author}</p>
 {/each}
 

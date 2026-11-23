@@ -132,12 +132,10 @@ func SearchBooklistInAnyField(datasbase *gorm.DB) gin.HandlerFunc {
 		var booklist []Book
 
 		field := webpage_context.Query("field")
-		text := webpage_context.Query(("query_author"))
-		log.Println("handler.go:SearchBookListInAnyField()", field, text)
-		// datasbase.Where(field+" = ?", "Fyodor Dostoevsky").Find(&booklist)
-		datasbase.Where(field+"= ?", text).Find(&booklist)
+		search_text := webpage_context.Query(("search_text"))
+		log.Println("handler.go:SearchBookListInAnyField()", field, search_text)
+		datasbase.Where(field+"= ?", search_text).Find(&booklist)
 		//format result to JSON)
-
 		webpage_context.JSON(200, booklist)
 	}
 }
