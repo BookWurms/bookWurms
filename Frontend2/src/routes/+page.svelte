@@ -59,6 +59,16 @@
 		console.log(response.status);
 		booksFound = await response.json();
 		console.log(" ", booksFound);
+
+		//chabge URL
+		history.pushState(
+			null,
+			"",
+			"/?field=" +
+				encodeURIComponent(optionField) +
+				"&search_text=" +
+				encodeURIComponent(search_text),
+		);
 	}
 
 	//after this is all defined, we just call the get all books API like this.
@@ -66,6 +76,27 @@
 	onMount(() => {
 		loadBooks();
 		dropdownSearchableFields();
+
+		//bookmarked search URL
+		//get parameters from URL bar
+		const autofill__search_text = new URLSearchParams(
+			window.location.search,
+		).get("search_text");
+		const autofill__optionField = new URLSearchParams(
+			window.location.search,
+		).get("field");
+
+		// use values from URL and show list
+		// fill authorToBeSearchedFor
+		if (autofill__search_text) {
+			search_text = autofill__search_text;
+
+			//select dropdown option from URL
+			if (autofill__optionField) {
+				optionField = autofill__optionField;
+			}
+		}
+		// searchForBooks();
 	});
 </script>
 
