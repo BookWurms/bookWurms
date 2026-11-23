@@ -34,19 +34,29 @@
 		await loadBooks();
 	}
 
+	// Dropdown options of fields of structure books, that are tagged as 'searchable'
+	let searchableFields = $state([]);
+	//chosen option, the field we search in for our text
+	let optionField = $state("");
+	async function dropdownSearchableFields() {
+		const response = await fetch("/api/books/searchableFields");
+		searchableFields = await response.json();
+	}
+
 	//text input field for text to be searched for
-	let query_author = $state("");
+	let search_text = $state("");
 	//booklist as result of our search
 	let booksForOneAuthor = $state([]);
 	async function searchBooksByAuthor() {
-		console.log(query_author);
+		console.log(search_text);
 		const response = await fetch(
-			"/api/books/search?field=Author&query_author=" +
-				encodeURIComponent(query_author),
+			// "/api/books/search?field=Author&query_author=" +
+			// 	encodeURIComponent(search_text),
+			"/api/books/search?field=" +
+				encodeURIComponent(optionField) +
+				"&query_author=" +
+				encodeURIComponent(search_text),
 		);
-
-		// fetch("/api/books/search?field=" + encodeURIComponent(field) +
-		// "&query_author=" + encodeURIComponent(text))
 
 		console.log(response.status);
 		booksForOneAuthor = await response.json();
@@ -54,7 +64,11 @@
 	}
 
 	//after this is all defined, we just call the get all books API like this.
-	onMount(loadBooks);
+	// onMount(loadBooks);
+	onMount(() => {
+		loadBooks();
+		dropdownSearchableFields();
+	});
 </script>
 
 <h1>BookWurm</h1>
@@ -68,11 +82,21 @@
 {/each}
 
 <h2>GET Books by Search</h2>
-<input type="text" bind:value={query_author} placeholder="Enter name" />
+<!-- dropdown for searchable fields/columns -->
+<!-- GORM field tag 'searchable' -->
+<select id="bookStructureField" bind:value={optionField}>
+	<option value="">Select a field</option>
+	{#each searchableFields as field}
+		<option value={field}>{field}</option>
+	{/each}
+</select>
+<!-- text input field -->
+<input type="text" bind:value={search_text} placeholder="Enter name" />
 <!-- call async function to get database results via /api/books/search -->
 <button onclick={searchBooksByAuthor}>Submit</button>
 {#each booksForOneAuthor as book}
-	<p>{book.Title} by {book.Author}</p>{/each}
+	<p>{book.Title} by {book.Author}</p>
+{/each}
 
 <h2>Upload a book</h2>
 <form onsubmit={upload}>
