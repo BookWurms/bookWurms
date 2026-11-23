@@ -1,0 +1,8 @@
+{
+	"recommendations": [
+		"svelte.svelte-vscode",
+		"golang.go",
+		"ms-azuretools.vscode-docker",
+		"github.vscode-pull-request-github"
+	]
+}
