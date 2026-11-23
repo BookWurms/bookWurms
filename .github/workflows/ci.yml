@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and start all containers
+        run: |
+          cat > .env <<EOF
+          POSTGRES_USER=ci_user
+          POSTGRES_PASSWORD=ci_password
+          POSTGRES_DB=ci_db
+          EOF
+          docker compose up --build --wait
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down

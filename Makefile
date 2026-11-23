@@ -92,6 +92,11 @@ $(NODE_DIR)/bin/node:
 .PHONY: help
 # ---------------------------------------------------------------------------
 
+pre-commit-checks: all
+pre-push-checks: all go-test
+
+.PHONY: go-mod go-test go-test-verbose pre-commit-checks pre-push-checks
+
 help:
 	@echo "Options:"
 	@echo "  all (default)              - alias:  go-tidy + docker-up-dev"
