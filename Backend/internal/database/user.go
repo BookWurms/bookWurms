@@ -52,7 +52,7 @@ func CreateUser(db *gorm.DB, user *User) error {
 
 	/*
 		This only assigns the 'user' role if no role has been provided by the calling function.
-		If 'admin' as been assigned in the passed struct, the created user will be an admin.
+		If 'admin' has been assigned in the passed struct, the created user will be an admin.
 		FIXME: Keep this potential security risk in mind for later implementation and authorization checks.
 	*/
 	if user.Role == "" {
