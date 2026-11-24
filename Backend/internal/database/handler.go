@@ -55,24 +55,6 @@ func GetBooksByAuthor(myDatabase *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// get all fields from structure Book that are searchable for dropdown list
-func GetFieldsTagedSearchable() gin.HandlerFunc {
-
-	return func(webpage_context *gin.Context) {
-		// name of first field
-		// webpage_context.JSON(200, reflect.TypeOf(Book{}).Field(1).Name)
-
-		//all fields
-		searchableFields := []string{}
-		for field_count := 0; field_count < reflect.TypeOf(Book{}).NumField(); field_count++ {
-			if (reflect.TypeOf(Book{}).Field(field_count).Tag.Get("searchable") == "true") {
-				searchableFields = append(searchableFields, reflect.TypeOf(Book{}).Field(field_count).Name)
-			}
-		}
-		webpage_context.JSON(200, searchableFields)
-	}
-}
-
 /*
 Migrated from main, this will take the file, and join it into the uploads folder.
 Needs to validate the file is in fact an epub in the backend.
@@ -129,6 +111,20 @@ func UploadBook(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// get all fields from structure Book that are searchable for dropdown list
+func GetFieldsTagedSearchable() gin.HandlerFunc {
+
+	return func(webpage_context *gin.Context) {
+		searchableFields := []string{}
+		for field_count := 0; field_count < reflect.TypeOf(Book{}).NumField(); field_count++ {
+			if (reflect.TypeOf(Book{}).Field(field_count).Tag.Get("searchable") == "true") {
+				searchableFields = append(searchableFields, reflect.TypeOf(Book{}).Field(field_count).Name)
+			}
+		}
+		webpage_context.JSON(200, searchableFields)
+	}
+}
+
 // get all books that match text within field
 func SearchBooklistInAnyField(datasbase *gorm.DB) gin.HandlerFunc {
 	return func(webpage_context *gin.Context) {
@@ -136,12 +132,10 @@ func SearchBooklistInAnyField(datasbase *gorm.DB) gin.HandlerFunc {
 		var booklist []Book
 
 		field := webpage_context.Query("field")
-		text := webpage_context.Query(("query_author"))
-		log.Println(field, text)
-		// datasbase.Where(field+" = ?", "Fyodor Dostoevsky").Find(&booklist)
-		datasbase.Where(field+"= ?", text).Find(&booklist)
+		search_text := webpage_context.Query(("search_text"))
+		log.Println("handler.go:SearchBookListInAnyField()", field, search_text)
+		datasbase.Where(field+"= ?", search_text).Find(&booklist)
 		//format result to JSON)
-
 		webpage_context.JSON(200, booklist)
 	}
 }
