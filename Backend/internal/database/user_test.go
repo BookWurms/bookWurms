@@ -27,7 +27,9 @@ func openTestDB(t *testing.T) *gorm.DB {
 		t.Skip("TEST_DATABASE_URL is not set; skipping PostgreSQL integration test")
 	}
 
-	db, err := gorm.Open(postgres.Open(sourceName), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(sourceName), &gorm.Config{
+		TranslateError: true,
+	})
 	if err != nil {
 		t.Fatalf("failed to connect to test database: %v", err)
 	}
@@ -188,6 +190,9 @@ func TestCreateUserRejectsDuplicateEmail(t *testing.T) {
 	err := CreateUser(db, duplicate)
 	if err == nil {
 		t.Fatal("expected duplicate email insertion to fail")
+	}
+	if !errors.Is(err, ErrDuplicateEmail) {
+		t.Fatalf("expected ErrDuplicateEmail: '%v', got '%v'", ErrDuplicateEmail, err)
 	}
 }
 
