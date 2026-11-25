@@ -191,6 +191,65 @@ func TestCreateUserRejectsDuplicateEmail(t *testing.T) {
 	}
 }
 
+func TestCreateUserDefaultsRoleToUser(t *testing.T) {
+	db := openTestDB(t)
+
+	user := &User{
+		Email:        testEmail(t),
+		PasswordHash: "test-hash",
+	}
+
+	if err := CreateUser(db, user); err != nil {
+		t.Fatalf("failed to create user: %v", err)
+	}
+
+	if user.Role != RoleUser {
+		t.Errorf("expected role %q, got %q", RoleUser, user.Role)
+	}
+
+	t.Cleanup(func() {
+		db.Unscoped().Delete(user)
+	})
+}
+
+func TestCreateUserRoleSetToAdmin(t *testing.T) {
+	db := openTestDB(t)
+
+	user := &User{
+		Email:        testEmail(t),
+		PasswordHash: "test-hash",
+		Role:         RoleAdmin,
+	}
+
+	if err := CreateUser(db, user); err != nil {
+		t.Fatalf("failed to create user: %v", err)
+	}
+
+	if user.Role != RoleAdmin {
+		t.Errorf("expected role %q, got %q", RoleUser, user.Role)
+	}
+
+	t.Cleanup(func() {
+		db.Unscoped().Delete(user)
+	})
+}
+
+func TestCreateUserRejectsInvalidRole(t *testing.T) {
+	db := openTestDB(t)
+
+	user := &User{
+		Email:        testEmail(t),
+		PasswordHash: "test-hash",
+		Role:         UserRole("superadmin"),
+	}
+
+	err := CreateUser(db, user)
+
+	if !errors.Is(err, ErrInvalidRole) {
+		t.Errorf("expected ErrInvalidRole, got %v", err)
+	}
+}
+
 func TestGetUserByEmail(t *testing.T) {
 	db := openTestDB(t)
 

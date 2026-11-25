@@ -8,16 +8,25 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRole string
+
+const (
+	RoleUser  UserRole = "user"
+	RoleAdmin UserRole = "admin"
+)
+
 var (
 	ErrNilUser       = errors.New("user cannot be nil")
 	ErrEmptyEmail    = errors.New("email cannot be empty")
 	ErrEmptyPassword = errors.New("password hash cannot be empty")
+	ErrInvalidRole   = errors.New("invalid user role")
 )
 
 type User struct {
 	ID           uint      `gorm:"primaryKey"`
 	Email        string    `gorm:"not null;uniqueIndex;size:255"`
 	PasswordHash string    `gorm:"not null" json:"-"`
+	Role         UserRole  `gorm:"type:varchar(10);not null;default:user"`
 	CreatedAt    time.Time `gorm:"not null"`
 	UpdatedAt    time.Time `gorm:"not null"`
 }
@@ -39,6 +48,19 @@ func CreateUser(db *gorm.DB, user *User) error {
 
 	if user.PasswordHash == "" {
 		return ErrEmptyPassword
+	}
+
+	/*
+		This only assigns the 'user' role if no role has been provided by the calling function.
+		If 'admin' has been assigned in the passed struct, the created user will be an admin.
+		FIXME: Keep this potential security risk in mind for later implementation and authorization checks.
+	*/
+	if user.Role == "" {
+		user.Role = RoleUser
+	}
+
+	if !isValidUserRole(user.Role) {
+		return ErrInvalidRole
 	}
 
 	return db.Create(user).Error
@@ -73,6 +95,15 @@ func GetUserByID(db *gorm.DB, id uint) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func isValidUserRole(role UserRole) bool {
+	switch role {
+	case RoleUser, RoleAdmin:
+		return true
+	default:
+		return false
+	}
 }
 
 func normalizeEmail(email string) string {
