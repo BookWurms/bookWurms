@@ -2,3 +2,7 @@ node_modules
 dist
 build
 .svelte-kit
+.env*
+Dockerfile
+.dockerignore
+.gitignore

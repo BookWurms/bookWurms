@@ -66,3 +66,4 @@ in `books/` some example EPUB(ebook) files. At the moment they are automatically
 - [Svlet](https://svelte.dev/docs)
 - [OpenAPI](https://learn.openapis.org/)
 - [Azure API Design](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design)
+- [lazydocker](https://github.com/jesseduffield/lazydocker)
