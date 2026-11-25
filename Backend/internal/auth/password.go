@@ -70,6 +70,11 @@ func HashPassword(password string) (string, error) {
 	return encoded, nil
 }
 
+/*
+VerifyPassword compares a stored hash with a provided password
+and returns whether the password matches,
+or error if hash decoding fails
+*/
 func VerifyPassword(encodedHash, password string) (bool, error) {
 	if len(password) > maxPasswordBytes {
 		return false, ErrPasswordTooLong
