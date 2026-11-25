@@ -76,3 +76,43 @@ func TestRejectPasswordTooLong(t *testing.T) {
 		t.Fatalf("expected ErrPasswordTooLong, got %v", err)
 	}
 }
+
+func TestValidatePassword(t *testing.T) {
+	tests := []struct {
+		name     string
+		password string
+		wantErr  bool
+	}{
+		{
+			name:     "password too short",
+			password: "short",
+			wantErr:  true,
+		},
+		{
+			name:     "password exactly minimum length",
+			password: strings.Repeat("a", MinPasswordLength),
+			wantErr:  false,
+		},
+		{
+			name:     "password longer than minimum",
+			password: strings.Repeat("a", MinPasswordLength+1),
+			wantErr:  false,
+		},
+		{
+			name:     "unicode password",
+			password: strings.Repeat("ä", MinPasswordLength),
+			wantErr:  false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidatePassword(tt.password)
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidatePassword() error = %v, wantErr %v",
+					err, tt.wantErr)
+			}
+		})
+	}
+}
