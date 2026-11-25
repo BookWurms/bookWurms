@@ -10,7 +10,7 @@
 
 localhost {
 	handle /api/* {
-		reverse_proxy backend:50000
+		reverse_proxy go-backend:50000
 	}
 	handle {
 		root * /srv/frontend
