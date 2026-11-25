@@ -28,7 +28,7 @@ func Connect() (*gorm.DB, error) {
 		Scheme: "postgres",
 		User: url.UserPassword(os.Getenv("POSTGRES_USER"),
 			os.Getenv("POSTGRES_PASSWORD")),
-		Host:     "db:5432",
+		Host:     "postgres-db:5432",
 		Path:     os.Getenv("POSTGRES_DB"),
 		RawQuery: "sslmode=disable",
 	}
