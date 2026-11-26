@@ -99,6 +99,12 @@ func TestValidatePassword(t *testing.T) {
 			wantErr:  false,
 		},
 		{
+			name:     "password longer than maximum",
+			password: strings.Repeat("a", MaxPasswordLength+1),
+			wantErr:  true,
+		},
+
+		{
 			name:     "unicode password",
 			password: strings.Repeat("ä", MinPasswordLength),
 			wantErr:  false,
