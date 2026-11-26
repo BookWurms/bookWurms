@@ -6,6 +6,8 @@ import (
 	"src/internal/database"
 
 	"github.com/gin-gonic/gin"
+
+	"src/internal/handlers"
 )
 
 func runServer(addr string, handler http.Handler) error {
@@ -45,6 +47,11 @@ func main() {
 	*/
 	router := gin.Default()
 	router.MaxMultipartMemory = 8 << 20 // 8 MiB size constraint for post
+
+	authHandler := handlers.NewAuthHandler(gormDB)
+
+	authRoutes := router.Group("/api/auth")
+	authRoutes.POST("/register", authHandler.Register)
 
 	router.GET("/api/health", database.GetOk) // for testing
 	router.GET("api/books", database.GetBooks(gormDB))

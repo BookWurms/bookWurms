@@ -34,7 +34,9 @@ func Connect() (*gorm.DB, error) {
 	}
 	dsn := u.String()
 
-	gormDB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	gormDB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		TranslateError: true,
+	})
 	if err != nil {
 		return nil, err
 	}

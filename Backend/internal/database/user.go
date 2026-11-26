@@ -16,10 +16,11 @@ const (
 )
 
 var (
-	ErrNilUser       = errors.New("user cannot be nil")
-	ErrEmptyEmail    = errors.New("email cannot be empty")
-	ErrEmptyPassword = errors.New("password hash cannot be empty")
-	ErrInvalidRole   = errors.New("invalid user role")
+	ErrDuplicateEmail = errors.New("email address already exists")
+	ErrEmptyEmail     = errors.New("email cannot be empty")
+	ErrEmptyPassword  = errors.New("password hash cannot be empty")
+	ErrInvalidRole    = errors.New("invalid user role")
+	ErrNilUser        = errors.New("user cannot be nil")
 )
 
 type User struct {
@@ -63,7 +64,11 @@ func CreateUser(db *gorm.DB, user *User) error {
 		return ErrInvalidRole
 	}
 
-	return db.Create(user).Error
+	err := db.Create(user).Error
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return ErrDuplicateEmail
+	}
+	return err
 }
 
 func GetUserByEmail(db *gorm.DB, email string) (*User, error) {
