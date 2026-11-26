@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -56,9 +57,18 @@ func (handler *AuthHandler) Register(ctx *gin.Context) {
 	}
 
 	if err := auth.ValidatePassword(request.Password); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "password must contain at least 8 characters",
-		})
+		if errors.Is(err, auth.ErrPasswordTooShort) ||
+			errors.Is(err, auth.ErrPasswordTooLong) {
+			errMsg := fmt.Sprintf(
+				"password must contain between %d and %d characters",
+				auth.MinPasswordLength,
+				auth.MaxPasswordLength,
+			)
+
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": errMsg,
+			})
+		}
 		return
 	}
 
