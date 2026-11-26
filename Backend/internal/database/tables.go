@@ -1,7 +1,7 @@
 // Im using GORM as per discussion with robin, should make it a bit easier to query
 // without constantly and explicitly writing SQL queries every time.
 // the setup was a pain but running AutoMigrate to create the table was nice to do.
-// see GORMDOC.md if you want to understand this better.
+// see gorm.md if you want to understand this better.
 package database
 
 import (
@@ -30,7 +30,7 @@ func CreateSeededBookTable(db *gorm.DB) error {
 	return db.AutoMigrate(&Book{})
 }
 
-// todo: fix me         @RoboFB work in progress, don't use
+// FIXME:        @RoboFB work in progress, don't use
 func addSearchIndex(db *gorm.DB) error {
 	err := db.Exec("CREATE EXTENSION IF NOT EXISTS pg_trgm").Error
 	if err != nil {

@@ -1,7 +1,6 @@
-
 # GORM Resources
 
-Gorm is a "Object-Relational Mapping (ORM) library, so its a library where we define our SQL tables as structs, and let the library  functions handle the abstraction into SQL.
+Gorm is an "Object-Relational Mapping (ORM)" library, so it's a library where we define our SQL tables as structs, and let the library functions handle the abstraction into SQL.
 
 ### How to install GORM package
 Use the following commands in your folder to add the package in the go mod file:
@@ -40,7 +39,7 @@ type Book struct {
 }
 ```
 
-But this alone in either case will not create a table for us magically. we can use gorms automigrate function on our struct, which transliterates it into SQL for postgres.
+But this alone in either case will not create a table for us magically. We can use gorms AutoMigrate function on our struct, which transliterates it into SQL for postgres.
 
 ```
 func CreateTable(db *gorm.DB) error {
