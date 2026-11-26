@@ -10,7 +10,10 @@ const (
 	MaxPasswordLength = 40
 )
 
-var ErrPasswordTooShort = errors.New("password is too short")
+var (
+	ErrPasswordTooShort = errors.New("password is too short")
+	ErrPasswordTooLong  = errors.New("password exceeds maximum length")
+)
 
 /* ValidatePassword enforces predefined password policies during user registration */
 func ValidatePassword(password string) error {

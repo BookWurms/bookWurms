@@ -26,10 +26,7 @@ const (
 	maxParallelism uint32 = 4
 )
 
-var (
-	ErrPasswordTooLong = errors.New("password exceeds maximum length")
-	ErrInvalidHash     = errors.New("invalid password hash")
-)
+var ErrInvalidHash = errors.New("invalid password hash")
 
 /*
 HashPassword creates an Argon2id hash with a unique random salt.
