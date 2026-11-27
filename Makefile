@@ -89,7 +89,7 @@ $(NODE_DIR)/bin/node:
 
 
 # ---------------------------------------------------------------------------
-.PHONY: help
+.PHONY: init-git-hooks pre-commit-checks pre-push-checks
 # ---------------------------------------------------------------------------
 
 init-git-hooks:
@@ -97,7 +97,9 @@ init-git-hooks:
 pre-commit-checks: all
 pre-push-checks: all go-test
 
-.PHONY: go-mod go-test go-test-verbose init-git-hooks pre-commit-checks pre-push-checks
+# ---------------------------------------------------------------------------
+.PHONY: help
+# ---------------------------------------------------------------------------
 
 help:
 	@echo "Options:"
