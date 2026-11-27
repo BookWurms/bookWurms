@@ -29,8 +29,9 @@ re: docker-down all
 
 
 # ---------------------------------------------------------------------------
-.PHONY: docker-up-dev docker-up-prod docker-down docker-build-dev-no-cache 
-.PHONY: docker-logs docker-ps docker-nuke-volumes
+.PHONY: docker-up-prod docker-up-dev docker-build-dev-no-cache 
+.PHONY: docker-down docker-nuke-volumes 
+.PHONY: docker-logs docker-ps
 # ---------------------------------------------------------------------------
 
 # This is the final project result 
@@ -40,21 +41,21 @@ docker-up-prod:
 docker-up-dev:
 	$(DOCKER_DEV) up --build -d
 
+docker-build-dev-no-cache:
+	$(DOCKER_DEV) build --no-cache 
+
 docker-down:
-	$(DOCKER_ALL) down --remove-orphans
+	$(DOCKER_ALL) down
+
+docker-nuke-volumes:
+	@echo "Delete all volumes(postgres-db, caddy)? [y/N] " && read ans && [ "$$ans" = y ]
+	$(DOCKER_ALL) down -v --remove-orphans
 
 docker-logs:
 	$(DOCKER_ALL) logs
 
 docker-ps:
 	$(DOCKER_ALL) ps
-
-docker-nuke-volumes:
-	@echo "Delete all volumes(postgres-db, caddy)? [y/N] " && read ans && [ "$$ans" = y ]
-	$(DOCKER_ALL) down -v
-
-docker-build-dev-no-cache:
-	$(DOCKER_DEV) build --no-cache 
 
 
 # ---------------------------------------------------------------------------
@@ -103,17 +104,20 @@ pre-push-checks: all go-test
 
 help:
 	@echo "Options:"
-	@echo "  all (default)              - alias:  go-tidy + docker-up-dev"
-	@echo "  re                         - alias:  docker-down + all"
-	@echo "  docker-up-prod             - run:   in production mode"
-	@echo "  docker-up-dev              - run:   prod + dev"
-	@echo "  docker-down                - stop+remove: prod + dev + test"
-	@echo "  docker-logs                - logs:  prod + dev + test"
-	@echo "  docker-ps                  - list:  prod + dev + test"
-	@echo "  docker-nuke-volumes        - remove: ALL volumes"
-	@echo "  docker-build-dev-no-cache  - run:   build dev image without cache"
-	@echo "  go-tidy                    - run:   go mod tidy"
-	@echo "  go-test                    - run:   go test ./..."
-	@echo "  go-test-verbose            - run:   go test -v -count=1 ./..."
+	@echo "  all (default)              - alias:   go-tidy + docker-up-dev"
+	@echo "  re                         - alias:   docker-down + all"
+	@echo "  docker-up-prod             - run:     in production mode"
+	@echo "  docker-up-dev              - run:     prod + dev"
+	@echo "  docker-build-dev-no-cache  - run:     build dev image without cache"
+	@echo "  docker-down                - stop:    prod + dev + test"
+	@echo "  docker-nuke-volumes        - remove:  ALL volumes"
+	@echo "  docker-logs                - logs:    prod + dev + test"
+	@echo "  docker-ps                  - list:    prod + dev + test"
+	@echo "  go-tidy                    - run:     go mod tidy"
+	@echo "  go-test                    - run:     go test ./..."
+	@echo "  go-test-verbose            - run:     go test -v -count=1 ./..."
 	@echo "  node-modules-install-local - install: local Node + Frontend2/node_modules"
-	@echo "  help                       - print: this help"
+	@echo "  init-git-hooks             - install: git hooks: checks on commit/push"
+	@echo "  pre-commit-checks          - run:     checks on pre-commit"
+	@echo "  pre-push-checks            - run:     checks on pre-push"
+	@echo "  help                       - print:   this help"
