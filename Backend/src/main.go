@@ -10,6 +10,9 @@ import (
 	"src/internal/handlers"
 )
 
+const miB = 1 << 20
+const maxMemory = 8 * miB
+
 func runServer(addr string, handler http.Handler) error {
 	srv := &http.Server{
 		Addr:    addr,
@@ -46,34 +49,25 @@ func main() {
 	 initialize gin server context and register handlers
 	*/
 	router := gin.Default()
-	router.MaxMultipartMemory = 8 << 20 // 8 MiB size constraint for post
+	router.MaxMultipartMemory = maxMemory
 
 	authHandler := handlers.NewAuthHandler(gormDB)
 
 	/* API routes */
 	apiRoutes := router.Group("/api")
+	apiRoutes.GET("/health", database.GetOk) // docker health check
 
 	/* Authentication routes */
 	authRoutes := apiRoutes.Group("/auth")
 	authRoutes.POST("/register", authHandler.Register)
 
-	/* General API routes */
-	apiRoutes.GET("/health", database.GetOk) // for testing
-
 	/* Book routes */
 	bookRoutes := apiRoutes.Group("/books")
-
 	bookRoutes.GET("", database.GetBooks(gormDB))
 	bookRoutes.POST("", database.UploadBook(gormDB))
-
-	// get all data sets by one author, to be searched for, from table books
-	bookRoutes.GET("/author", database.GetBooksByAuthor(gormDB))
-
-	//get all fields from structure Book that are searchable for dropdown list
-	bookRoutes.GET("/searchableFields", database.GetFieldsTagedSearchable())
-
-	//get books that match text in chosen field
-	bookRoutes.GET("/search", database.SearchBooklistInAnyField(gormDB))
+	bookRoutes.GET("/author", database.GetBooksByAuthor(gormDB))             // by one author
+	bookRoutes.GET("/searchableFields", database.GetFieldsTagedSearchable()) //dropdown list, searchable books
+	bookRoutes.GET("/search", database.SearchBooklistInAnyField(gormDB))     //match chosen text field
 
 	if err := runServer(":50000", router); err != nil {
 		log.Fatal(err)

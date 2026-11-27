@@ -30,6 +30,11 @@ TODO: @ThiloSchueller add a project description
 ### Frontend2 (new)
 Svelte as Frontend framework. The Web-Pages are in `routes/` there needs to be a directory with the name of the route and the page is named every time `+page.svelte`
 
+- https://localhost:8444/ (production: website)
+- http://localhost:5173/  (dev: live reload, http!)
+- http://localhost:8080/  (dev: adminer production database)
+- localhost:5433          (test: test postgres database)
+- 
 
 ### Data
 in `books/` some example EPUB(ebook) files. At the moment they are automatically added to the database.
