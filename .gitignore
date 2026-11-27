@@ -3,4 +3,5 @@ __*
 
 # Frontend
 node_modules/
+.node/
 dist/

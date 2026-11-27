@@ -12,6 +12,11 @@ DOCKER_TEST :=		$(DOCKER_PROD) --profile test
 
 GO_TEST :=			go test
 
+# local Node for the editor tooling (system Node is too old for SvelteKit 3)
+NODE_VERSION :=		26.13.1
+NODE_DIR :=			.node
+NODE_BIN :=			$(CURDIR)/$(NODE_DIR)/bin
+
 
 # ---------------------------------------------------------------------------
 .PHONY: all re 
@@ -24,8 +29,9 @@ re: docker-down all
 
 
 # ---------------------------------------------------------------------------
-.PHONY: docker-up-dev docker-up-prod docker-down docker-build-dev-no-cache 
-.PHONY: docker-logs docker-ps docker-nuke-volumes
+.PHONY: docker-up-prod docker-up-dev docker-build-dev-no-cache 
+.PHONY: docker-down docker-nuke-volumes 
+.PHONY: docker-logs docker-ps
 # ---------------------------------------------------------------------------
 
 # This is the final project result 
@@ -35,21 +41,21 @@ docker-up-prod:
 docker-up-dev:
 	$(DOCKER_DEV) up --build -d
 
+docker-build-dev-no-cache:
+	$(DOCKER_DEV) build --no-cache 
+
 docker-down:
-	$(DOCKER_ALL) down --remove-orphans
+	$(DOCKER_ALL) down
+
+docker-nuke-volumes:
+	@echo "Delete all volumes(postgres-db, caddy)? [y/N] " && read ans && [ "$$ans" = y ]
+	$(DOCKER_ALL) down -v --remove-orphans
 
 docker-logs:
 	$(DOCKER_ALL) logs
 
 docker-ps:
 	$(DOCKER_ALL) ps
-
-docker-nuke-volumes:
-	@echo "Delete all volumes(postgres-db, caddy)? [y/N] " && read ans && [ "$$ans" = y ]
-	$(DOCKER_ALL) down -v
-
-docker-build-dev-no-cache:
-	$(DOCKER_DEV) build --no-cache 
 
 
 # ---------------------------------------------------------------------------
@@ -69,21 +75,49 @@ go-test-verbose: go-test
 
 
 # ---------------------------------------------------------------------------
+.PHONY: node-modules-install-local
+# ---------------------------------------------------------------------------
+
+# install Frontend2/node_modules on the host so the Svelte VS Code extension works
+node-modules-install-local: $(NODE_DIR)/bin/node
+	cd Frontend2/ && PATH="$(NODE_BIN):$$PATH" npm ci
+
+# download Node into ./.node (linux x64, no sudo needed)
+$(NODE_DIR)/bin/node:
+	mkdir -p $(NODE_DIR)
+	curl -fsSL https://nodejs.org/dist/v$(NODE_VERSION)/node-v$(NODE_VERSION)-linux-x64.tar.xz \
+		| tar -xJ -C $(NODE_DIR) --strip-components=1
+
+
+# ---------------------------------------------------------------------------
+.PHONY: init-git-hooks pre-commit-checks pre-push-checks
+# ---------------------------------------------------------------------------
+
+init-git-hooks:
+	git config core.hooksPath .githooks
+pre-commit-checks: all
+pre-push-checks: all go-test
+
+# ---------------------------------------------------------------------------
 .PHONY: help
 # ---------------------------------------------------------------------------
 
 help:
 	@echo "Options:"
-	@echo "  all (default)       - alias:  go-tidy + docker-up-dev"
-	@echo "  re                  - alias:  docker-down + all"
-	@echo "  docker-up-prod      - run:   in production mode"
-	@echo "  docker-up-dev       - run:   prod + dev"
-	@echo "  docker-down         - stop+remove: prod + dev + test"
-	@echo "  docker-logs         - logs:  prod + dev + test"
-	@echo "  docker-ps           - list:  prod + dev + test"
-	@echo "  docker-nuke-volumes - remove: ALL volumes"
-	@echo "  docker-build-dev-no-cache"
-	@echo "  go-tidy             - run:   go mod tidy"
-	@echo "  go-test             - run:   go test ./..."
-	@echo "  go-test-verbose     - run:   go test -v -count=1 ./..."
-	@echo "  help                - print: this help"
+	@echo "  all (default)              - alias:   go-tidy + docker-up-dev"
+	@echo "  re                         - alias:   docker-down + all"
+	@echo "  docker-up-prod             - run:     in production mode"
+	@echo "  docker-up-dev              - run:     prod + dev"
+	@echo "  docker-build-dev-no-cache  - run:     build dev image without cache"
+	@echo "  docker-down                - stop:    prod + dev + test"
+	@echo "  docker-nuke-volumes        - remove:  ALL volumes"
+	@echo "  docker-logs                - logs:    prod + dev + test"
+	@echo "  docker-ps                  - list:    prod + dev + test"
+	@echo "  go-tidy                    - run:     go mod tidy"
+	@echo "  go-test                    - run:     go test ./..."
+	@echo "  go-test-verbose            - run:     go test -v -count=1 ./..."
+	@echo "  node-modules-install-local - install: local Node + Frontend2/node_modules"
+	@echo "  init-git-hooks             - install: git hooks: checks on commit/push"
+	@echo "  pre-commit-checks          - run:     checks on pre-commit"
+	@echo "  pre-push-checks            - run:     checks on pre-push"
+	@echo "  help                       - print:   this help"
