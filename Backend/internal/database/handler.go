@@ -24,7 +24,7 @@ func GetBooks(db *gorm.DB) gin.HandlerFunc {
 	return x
 }
 
-// for testing purposes, a simple handler that returns a 200 OK response
+// used by docker health check, returns a simple 200 status ok response
 func GetOk(context *gin.Context) {
 	context.JSON(200, gin.H{"status": "ok"})
 }

@@ -49,6 +49,14 @@ services:
       postgres-db:
         condition: service_healthy
 
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:50000/api/health" ]
+      start_interval: 1s
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
   # TODO: the old one remove me latter
   # frontend-caddy:
   #   build:
@@ -90,7 +98,7 @@ services:
   # DEVELOPMENT Services:
   #
 
-  # node:24-alpine needed to run Vite. without this, each person needs to install it themselves.
+  # node:26-alpine needed to run Vite. without this, each person needs to install it themselves.
   vite-frontend-dev:
     profiles: [ "dev" ]
     build:
